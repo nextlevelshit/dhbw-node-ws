@@ -1,0 +1,24 @@
+{
+  "name": "node-ws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextlevelshit/dhbw-node-ws.git"
+  },
+  "author": "",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/nextlevelshit/dhbw-node-ws/issues"
+  },
+  "homepage": "https://github.com/nextlevelshit/dhbw-node-ws#readme",
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "type": "module"
+}
