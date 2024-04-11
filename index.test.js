@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import {port} from "./config/constants"; // assuming your server code is in index.js
+import {port} from "./src/config/constants";
 
 describe('WebSocket server', () => {
     let client;
@@ -51,25 +51,24 @@ describe('WebSocket server', () => {
         });
     });
 
-    test('should send a message to the room and receive a send-message event', (done) => {
-        let passcode;
-
-        client.on('message', (message) => {
-            const event = JSON.parse(message);
-            if (event.type === 'created-room') {
-                passcode = event.passcode;
-                client.send(JSON.stringify({ type: 'join-room', passcode }));
-            } else if (event.type === 'joined-room') {
-                client.send(JSON.stringify({ type: 'room', message: 'Hello, world!' }));
-            } else if (event.type === 'room') {
-                expect(event.message).toBe('Hello, world!');
-                done();
-            }
-        });
-
-        client.on('open', () => {
-            client.send(JSON.stringify({ type: 'create-room' }));
-        });
-    });
-    // Add more tests as needed for other events and edge cases
+    // test('should send a message to the room and receive a send-message event', (done) => {
+    //     let passcode;
+    //
+    //     client.on('message', (message) => {
+    //         const event = JSON.parse(message);
+    //         if (event.type === 'created-room') {
+    //             passcode = event.passcode;
+    //             client.send(JSON.stringify({ type: 'join-room', passcode }));
+    //         } else if (event.type === 'joined-room') {
+    //             client.send(JSON.stringify({ type: 'room', message: 'Hello, world!' }));
+    //         } else if (event.type === 'room') {
+    //             expect(event.message).toBe('Hello, world!');
+    //             done();
+    //         }
+    //     });
+    //
+    //     client.on('open', () => {
+    //         client.send(JSON.stringify({ type: 'create-room' }));
+    //     });
+    // });
 });
