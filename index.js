@@ -1,7 +1,7 @@
 import {v4 as uuid} from "uuid";
 import {WebSocketServer} from "ws";
 import {port} from "./src/config/constants.js";
-import {currentRoom} from "./src/util/currentRoom.js";
+
 
 const wss = new WebSocketServer({port});
 
