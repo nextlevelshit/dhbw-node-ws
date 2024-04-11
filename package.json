@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "client": "npx wscat -c \"ws://localhost:8082\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,15 @@
   },
   "homepage": "https://github.com/nextlevelshit/dhbw-node-ws#readme",
   "dependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "uuid": "^9.0.1",
     "ws": "^8.16.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "babel-jest": "^29.7.0"
+  }
 }
