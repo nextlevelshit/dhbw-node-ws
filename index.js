@@ -1,13 +1,14 @@
 import {v4 as uuid} from "uuid";
 import {WebSocketServer} from "ws";
 import {port} from "./src/config/constants.js";
-import {currentRoom} from "./src/util/currentRoom.js";
 import {Room} from "./src/Room.js";
+
 
 const wss = new WebSocketServer({port});
 
 const rooms = new Map();
 const clients = new Map();
+const currentRoom = (clientId) => [...rooms].find(([_, room]) => room.clients.has(clientId))[1];
 
 wss.on("connection", (ws) => {
 	const send = (message) => ws.send(JSON.stringify(message));
@@ -71,7 +72,7 @@ wss.on("connection", (ws) => {
 					let room = rooms.get(encodedPasscode);
 					if (room) {
 						room.join(clientId, ws);
-						room.broadcast({type: "user-joined", clients: room.clients.size});
+						room.broadcast({type: "user-joined", clientId, clients: room.clients.size});
 						console.log(`Client joined room ${room.id} with passcode ${event?.passcode}`);
 						// console.debug(`{"type":"leave-room","id":"${room.id}"}`);
 					} else {
