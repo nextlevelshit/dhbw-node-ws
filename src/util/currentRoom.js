@@ -1,1 +1,1 @@
-export const currentRoom = (clientId) => [...rooms].find(([_, room]) => room.clients.has(clientId))[1];
+export const currentRoom = (clientId, rooms) => [...rooms].find(([_, room]) => room.clients.has(clientId))[1];
