@@ -6,7 +6,7 @@ import {port} from "./src/config/constants.js";
 const wss = new WebSocketServer({port});
 
 const rooms = new Map();
-const clients = new Map();
+const clientsConnected = new Map();
 
 
 wss.on("connection", (ws) => {
