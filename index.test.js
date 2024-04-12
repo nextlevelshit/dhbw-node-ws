@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import {port} from "./src/config/constants";
-import {describe, beforeEach, afterEach, test} from "@jest/globals";
+import {describe, beforeEach, afterEach, test, expect} from "@jest/globals";
 
 describe("WebSocket server", () => {
 	let client;
