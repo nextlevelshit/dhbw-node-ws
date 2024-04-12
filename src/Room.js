@@ -23,7 +23,7 @@ export class Room {
         if (ws) {
             this.clients.delete(clientId);
             ws.send(JSON.stringify({type: "left-room", passcode: this.passcode, id: this.id}));
-            this.broadcast({type: "user-left", clients: this.clients.size});
+            this.broadcast({type: "user-left", clientId, clients: this.clients.size});
             console.log(`Client ${clientId} left room ${this.id}`);
         }
     }

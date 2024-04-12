@@ -1,6 +1,7 @@
 import {v4 as uuid} from "uuid";
 import {WebSocketServer} from "ws";
 import {port} from "./src/config/constants.js";
+import {Room} from "./src/Room.js";
 
 
 const wss = new WebSocketServer({port});
@@ -39,10 +40,15 @@ wss.on("connection", (ws) => {
 				// {"type":"rooms"}
 				case "rooms":
 					console.log(`Recieved message "rooms"`);
+					send({type: "rooms-list", rooms: [...rooms.keys()]})
 					break;
 				// {"type":"create-room"}
 				case "create-room":
 					console.log(`Recieved message "create-room"`);
+					const roomCreated = new Room();
+					send({type: "room-created", id: roomCreated.id});
+					roomCreated.join(clientId, ws);
+					rooms.set(roomCreated.id, roomCreated);
 					break;
 				// {"type":"join-room","passcode":"sk62"}
 				case "join-room":
@@ -57,10 +63,10 @@ wss.on("connection", (ws) => {
 					console.log(`Recieved message "update"`);
 					break;
 				default:
-					ws.send(JSON.stringify({type: "error", message: "Invalid event type"}));
+					send({type: "error", message: "Invalid event type"});
 			}
 		} catch (e) {
-			ws.send(JSON.stringify({type: "error", message: e.message}));
+			send({type: "error", message: e.message});
 		}
 	});
 
@@ -70,5 +76,5 @@ wss.on("connection", (ws) => {
 
 	ws.on("error", () => {
 		console.log("Error");
-	})
+	});
 });

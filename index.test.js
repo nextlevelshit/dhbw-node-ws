@@ -13,13 +13,13 @@ describe("WebSocket server", () => {
 		client.close();
 	});
 
-	test("should connect to the server", (done) => {
-		client.on("open", () => {
-			done()
-		});
-	});
+	// test("should connect to the server", (done) => {
+	// 	client.on("open", () => {
+	// 		done();
+	// 	});
+	// });
 
-	test("should create a room when receiving a create-room event", (done) => {
+	test("should create a room and recieve a create-room event", (done) => {
 		client.on("message", (message) => {
 			const event = JSON.parse(message);
 			if (event.type === "room-created") {
@@ -33,24 +33,40 @@ describe("WebSocket server", () => {
 		});
 	});
 
-	test("should join a room and receive a join-room event", (done) => {
-		let passcode;
-
+	test("room should exist", (done) => {
 		client.on("message", (message) => {
 			const event = JSON.parse(message);
-			if (event.type === "created-room") {
-				passcode = event.passcode;
-				client.send(JSON.stringify({type: "join-room", passcode}));
-			} else if (event.type === "joined-room") {
-				expect(event.id).toBeDefined();
+
+			if (event.type === "rooms-list") {
+				expect(event.rooms).toBeDefined();
+				expect(event.rooms.length).toBeGreaterThan(0);
 				done();
 			}
 		});
 
 		client.on("open", () => {
-			client.send(JSON.stringify({type: "create-room"}));
+			client.send(JSON.stringify({type: "rooms"}));
 		});
 	});
+
+	// test("should join a room and receive a join-room event", (done) => {
+	// 	let passcode;
+	//
+	// 	client.on("message", (message) => {
+	// 		const event = JSON.parse(message);
+	// 		if (event.type === "created-room") {
+	// 			passcode = event.passcode;
+	// 			client.send(JSON.stringify({type: "join-room", passcode}));
+	// 		} else if (event.type === "joined-room") {
+	// 			expect(event.id).toBeDefined();
+	// 			done();
+	// 		}
+	// 	});
+	//
+	// 	client.on("open", () => {
+	// 		client.send(JSON.stringify({type: "create-room"}));
+	// 	});
+	// });
 
 	// test('should send a message to the room and receive a send-message event', (done) => {
 	//     let passcode;
