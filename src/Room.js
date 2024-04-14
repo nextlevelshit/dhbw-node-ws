@@ -92,7 +92,10 @@ export class Room {
 	 * @param {string} clientId - The unique identifier for the client that sent the message.
 	 */
 	broadcast(type, data, clientId) {
-		[...this.clients.entries()].filter(([id]) => id !== clientId).forEach(([,ws]) => ws.sendEvent(type, {clientId, ...data, context: this.context}));
+		[...this.clients.entries()].filter(([id]) => id !== clientId).forEach(([, ws]) => ws.sendEvent(type, {
+			clientId, ...data,
+			context: this.context
+		}));
 	}
 
 	/**

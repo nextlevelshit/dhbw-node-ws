@@ -21,6 +21,7 @@ export class ChatServer {
 	 * @type {Map<string, Room>}
 	 */
 	rooms;
+
 	/**
 	 * Creates an instance of ChatServer.
 	 * It creates a WebSocket server and sets up the necessary event listeners.
