@@ -78,16 +78,9 @@ export class Room {
 	 */
 	leave(clientId) {
 		const ws = this.clients.get(clientId);
-		if (ws) {
-			this.clients.delete(clientId);
+		if (ws && this.clients.delete(clientId)) {
 			ws.sendEvent("left-room", {passcode: this.passcode, id: this.id});
 			this.broadcast("user-left", {clientId, clients: this.clients.size}, ws.id);
-			// if (this.clients.size === 0) {
-			// 	logger("closing room", this.id);
-			// 	verbose({id: this.id, clients: this.clients.size});
-			// 	this.clients.clear();
-			// 	delete this;
-			// }
 		}
 	}
 
@@ -99,7 +92,7 @@ export class Room {
 	 * @param {string} clientId - The unique identifier for the client that sent the message.
 	 */
 	broadcast(type, data, clientId) {
-		[...this.clients.entries()].filter(([id]) => id !== clientId).forEach(([,ws]) => ws.sendEvent(type, {...data, context: this.context}));
+		[...this.clients.entries()].filter(([id]) => id !== clientId).forEach(([,ws]) => ws.sendEvent(type, {clientId, ...data, context: this.context}));
 	}
 
 	/**

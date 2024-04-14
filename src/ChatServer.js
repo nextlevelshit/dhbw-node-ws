@@ -84,16 +84,27 @@ export class ChatServer {
 
 		switch (type) {
 			case "create-room":
+				room && this.leaveRoom(ws, room);
 				this.createRoom(ws);
 				break;
+			case "join-room-by-id":
+				room && this.leaveRoom(ws, room);
+				this.joinRoomById(ws, event.id);
+				break;
 			case "join-room":
+				room && this.leaveRoom(ws, room);
 				this.joinRoom(ws, event.passcode);
 				break;
 			case "leave-room":
-				room && room.leave(ws.id);
+				room && this.leaveRoom(ws, room);
 				break;
 			case "message":
-				room && room.broadcast("message", {message: event.message}, ws.id);
+				verbose({message: event.message});
+				if (room) {
+					room.broadcast("message", {message: event.message}, ws.id);
+				} else {
+					ws.sendEvent("error", {message: "Not in a room", rooms: [...this.rooms.keys()]});
+				}
 				break;
 			case "update":
 				room && room.updateContext(event.context);
@@ -105,7 +116,7 @@ export class ChatServer {
 				room && ws.sendEvent("clients", {clients: [...room.clients.keys()]});
 				break;
 			case "ping":
-				ws.sendEvent("pong", {clientId: ws.id});
+				ws.sendEvent("pong", {clientId: ws.id, roomId: ws.roomId});
 				break;
 			default:
 				ws.sendEvent("error", {message: "Invalid event type"});
@@ -119,7 +130,7 @@ export class ChatServer {
 	 */
 	handleClose(ws) {
 		const room = this.rooms.get(ws.roomId);
-		room && room.leave(ws.id);
+		room && this.leaveRoom(ws, room);
 		logger(ws.id, "disconnected");
 		verbose({room: ws.roomId});
 	}
@@ -153,9 +164,50 @@ export class ChatServer {
 		if (room) {
 			room.join(ws);
 			ws.roomId = roomId;
-			// ws.sendEvent("joined-room", {id: room.id, passcode: room.passcode});
 		} else {
 			ws.sendEvent("error", {message: `Room with passcode ${passcode} not found`});
+		}
+	}
+
+	/**
+	 * **joinRoomById** method is called to join a room by its id.
+	 * It finds the room by its id and adds the WebSocket instance to the room.
+	 * @param {WebSocket & {sendEvent:  (string, object) => void, roomId: string, id: string}} ws
+	 * @param {string} roomId
+	 */
+	joinRoomById(ws, roomId) {
+		const room = this.rooms.get(roomId);
+
+		if (room) {
+			room.join(ws);
+			ws.roomId = roomId;
+		} else {
+			ws.sendEvent("error", {message: `Room with id ${roomId} not found`});
+		}
+	}
+
+	/**
+	 * **leaveRoom** method is called to leave a room.
+	 * It removes the WebSocket instance from the room and deletes the room if it is empty.
+	 * @param {WebSocket & {sendEvent:  (string, object) => void, roomId: string, id: string}} ws - The WebSocket instance for the connection.
+	 * @param {Room} room - The room to leave.
+	 */
+	leaveRoom(ws, room) {
+		if (ws.roomId) {
+			room.leave(ws.id);
+
+			if (room.clients.size === 0) {
+				verbose("attempting to delete room", ws.roomId);
+				room.clients.clear();
+				room.context = {};
+				if (this.rooms.delete(ws.roomId)) {
+					logger("deleted room", ws.roomId);
+					delete ws.roomId;
+				}
+			}
+
+		} else {
+			ws.sendEvent("error", {message: "Not in a room"});
 		}
 	}
 }

@@ -2,3 +2,6 @@
 node_modules
 *lock.json
 coverage
+bun.lockb
+jsconfig.json
+README.md
