@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "start:debug": "DEBUG=app* nodemon index.js",
-    "serve": "npm index.js",
+    "serve": "node index.js",
     "serve:debug": "DEBUG=app* npm run serve",
     "client": "npx wscat -c \"ws://localhost:8082\"",
     "test": "jest",

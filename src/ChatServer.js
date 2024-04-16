@@ -117,7 +117,7 @@ export class ChatServer {
 				room && ws.sendEvent("clients", {clients: [...room.clients.keys()]});
 				break;
 			case "ping":
-				ws.sendEvent("pong", {clientId: ws.id, roomId: ws.roomId});
+				ws.sendEvent("pong", {clientId: ws.id, roomId: ws.roomId ?? null, clients: room ? [...room.clients.keys()] : []});
 				break;
 			default:
 				ws.sendEvent("error", {message: "Invalid event type"});
